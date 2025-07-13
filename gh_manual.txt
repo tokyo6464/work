@@ -1,0 +1,203 @@
+# リポジトリ統合スクリプト月次実行手順書
+
+## 概要
+複数のGitHubリポジトリを一つの統合リポジトリにマージするスクリプトの月次実行手順です。
+
+## 事前準備
+
+### 1. 必要なファイルの確認
+以下のファイルが作業ディレクトリに存在することを確認してください：
+- `repo_merge.sh` (統合スクリプト)
+- `.env` (環境変数設定ファイル)
+- `repos.txt` (対象リポジトリ一覧)
+
+### 2. 権限の確認
+- GitHubトークンが有効であることを確認
+- 対象リポジトリへの読み取り権限があることを確認
+- 宛先リポジトリへの書き込み権限があることを確認
+
+## 実行手順
+
+### Step 1: 環境設定ファイルの確認・更新
+
+`.env`ファイルの内容を確認し、必要に応じて更新してください：
+
+```bash
+# 必須設定項目
+GITHUB_USER="your-username"
+GITHUB_TOKEN="your-personal-access-token"
+SRC_ORG="source-organization"
+DEST_ORG="destination-organization"
+DEST_REPO_NAME="consolidated-repo"
+
+# オプション設定項目
+DEST_WORK_DIR="./destination_repo"
+COMMIT_MESSAGE="feat: Monthly repository consolidation - $(date '+%Y-%m')"
+```
+
+**注意事項：**
+- `GITHUB_TOKEN`の有効期限を確認
+- 月次実行のため、コミットメッセージに年月を含めることを推奨
+
+### Step 2: 対象リポジトリリストの確認
+
+`repos.txt`ファイルを確認し、統合対象のリポジトリが正しく記載されていることを確認：
+
+```
+repository-name-1
+repository-name-2
+repository-name-3
+```
+
+**確認事項：**
+- 新規追加・削除されたリポジトリの反映
+- リポジトリ名に誤りがないか
+- 空行や不要な文字が含まれていないか
+
+### Step 3: 作業ディレクトリのクリーンアップ
+
+既存の作業ディレクトリを削除（スクリプトで自動実行されますが、手動確認推奨）：
+
+```bash
+rm -rf ./temp_clone_dir ./destination_repo
+```
+
+### Step 4: スクリプトの実行
+
+スクリプトを実行してください：
+
+```bash
+chmod +x repo_merge.sh
+./repo_merge.sh
+```
+
+### Step 5: 実行結果の確認
+
+実行中に以下の出力を確認してください：
+
+```
+▶ Cloning destination repository...
+▶ Cloning source: repository-name-1
+→ Copying contents from repository-name-1
+▶ Cloning source: repository-name-2
+→ Copying contents from repository-name-2
+...
+▶ Setting up remote repository...
+▶ Pushing to remote repository...
+✅ 正常にリモートリポジトリにプッシュされました
+```
+
+## エラー対処
+
+### よくあるエラーと対処法
+
+**1. 認証エラー**
+```
+fatal: Authentication failed
+```
+**対処法：**
+- GitHubトークンの有効期限を確認
+- トークンの権限設定を確認
+- `.env`ファイルの設定を再確認
+
+**2. リポジトリクローン失敗**
+```
+クローン失敗: repository-name（スキップします）
+```
+**対処法：**
+- リポジトリが存在するか確認
+- リポジトリへの読み取り権限があるか確認
+- `repos.txt`のリポジトリ名を確認
+
+**3. プッシュエラー**
+```
+❌ プッシュに失敗しました
+```
+**対処法：**
+- 宛先リポジトリへの書き込み権限を確認
+- ブランチ名（main/master）を確認
+- ネットワーク接続を確認
+
+## 実行後の確認事項
+
+### 1. GitHubでの確認
+- 宛先リポジトリにすべてのファイルが正しく統合されているか確認
+- コミット履歴が正しく記録されているか確認
+- 最新のコミットメッセージが適切か確認
+
+### 2. ローカルファイルの確認
+- `./destination_repo`ディレクトリ内の構造を確認
+- 各リポジトリのファイルが正しくコピーされているか確認
+
+### 3. 作業ディレクトリのクリーンアップ
+実行完了後、一時ファイルを削除（任意）：
+
+```bash
+rm -rf ./temp_clone_dir
+# destination_repoは必要に応じて保持または削除
+```
+
+## 月次チェックリスト
+
+### 実行前チェックリスト
+- [ ] GitHubトークンの有効期限確認
+- [ ] 対象リポジトリの追加・削除確認
+- [ ] `repos.txt`の更新
+- [ ] `.env`ファイルの設定確認
+- [ ] 宛先リポジトリの権限確認
+
+### 実行後チェックリスト
+- [ ] スクリプトの正常終了確認
+- [ ] 宛先リポジトリでの統合結果確認
+- [ ] コミット履歴の確認
+- [ ] エラーログの確認
+- [ ] 作業ディレクトリのクリーンアップ
+
+## 緊急時の対応
+
+### ロールバック手順
+1. 宛先リポジトリで前回のコミットに戻す：
+   ```bash
+   git revert HEAD
+   git push origin main
+   ```
+
+2. 手動での修正が必要な場合：
+   ```bash
+   git reset --hard HEAD~1
+   git push --force origin main
+   ```
+
+### 問題発生時の連絡先
+- 技術責任者：[連絡先]
+- GitHub管理者：[連絡先]
+- 緊急時対応：[連絡先]
+
+## 履歴管理
+
+### 実行記録
+各月の実行結果を記録してください：
+
+```
+実行日: YYYY-MM-DD
+実行者: [名前]
+対象リポジトリ数: XX個
+実行結果: 成功/失敗
+備考: [特記事項]
+```
+
+### 設定変更履歴
+`.env`ファイルや`repos.txt`の変更履歴を記録してください：
+
+```
+変更日: YYYY-MM-DD
+変更者: [名前]
+変更内容: [詳細]
+理由: [変更理由]
+```
+
+---
+
+**最終更新日：** 2025-07-13
+**バージョン：** 1.0
+**作成者：** [作成者名]
