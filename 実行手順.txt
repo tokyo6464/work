@@ -1,0 +1,88 @@
+## 準備と実行手順書
+
+### 1. 必要なファイルを用意する
+
+#### 📁 ディレクトリ構成（例）
+
+```
+/
+├── migrate_repos.sh       ← シェルスクリプト
+├── .env                    ← 環境変数ファイル
+├── repos.txt               ← クローン対象のリポジトリ一覧
+```
+
+---
+
+### 2. `.env` ファイルを作成する
+
+以下の内容を参考に `.env` ファイルを作成。各値は自分の環境に合わせて書き換える。
+
+```env
+# GitHub (宛先リポジトリ) の認証情報
+GITHUB_USER=your-github-username
+GITHUB_TOKEN=your-github-token
+
+# クローン元（PMWBなど）の認証情報
+PMWB_USER=your-pmwb-username
+PMWB_PASSWORD=your-pmwb-password
+PMWB_HOST=pmwb.example.com
+
+# クローン元のオーガナイゼーション名
+SRC_ORG=source-org-name
+
+# 宛先リポジトリ情報
+DEST_ORG=your-github-org-or-user
+DEST_REPO_NAME=destination-repo-name
+DEST_BRANCH=main  # 宛先ブランチ名
+
+# クローン元リポジトリのブランチ名
+SOURCE_BRANCH=main
+
+# 宛先リポジトリをローカルに配置するパス
+DEST_WORK_DIR=./destination_repo
+```
+
+---
+
+### 3. `repos.txt` を作成する
+
+クローンしたいリポジトリ名（拡張子不要）を 1 行ずつ書く。
+
+```txt
+project-a
+project-b
+project-c
+```
+
+---
+
+### 4. 実行権限を付与
+
+```bash
+chmod +x migrate_repos.sh
+```
+
+---
+
+### 5. スクリプトを実行
+
+```bash
+./migrate_repos.sh
+```
+
+---
+
+### 6. 確認すること
+
+* 宛先リポジトリの `$DEST_BRANCH` に内容が正しくコピーされていること
+* `.git` フォルダが含まれていないこと（履歴を含まない状態）
+* `git log` に設定した `$COMMIT_MESSAGE` のコミットがあること
+
+---
+
+### 注意点
+
+* 宛先ブランチ（`$DEST_BRANCH`）が GitHub 側に存在していないと clone に失敗する。事前に作っておくか、必要なら `git clone` 後に `git checkout -b` で分岐させる処理を追記する。
+* `.env` や `.sh` ファイルにパスワードやトークンが含まれるため、 **絶対に Git 管理対象にしないこと。**
+
+---
