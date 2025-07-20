@@ -28,11 +28,11 @@ while read -r REPO_NAME; do
   # 指定ブランチで履歴なしクローン
   git clone --depth 1 --branch "$SOURCE_BRANCH" "$SRC_REPO_URL" "$TMP_DIR"
   if [ $? -ne 0 ]; then
-    echo "⚠ クローン失敗: ${REPO_NAME}（スキップします）"
+    echo "クローン失敗: ${REPO_NAME}（スキップします）"
     continue
   fi
 
-  echo "→ Copying contents from $REPO_NAME (excluding .git)"
+  echo "Copying contents from $REPO_NAME (excluding .git)"
   mkdir -p "${DEST_WORK_DIR}/${REPO_NAME}"
   rsync -av --exclude='.git' "$TMP_DIR/" "${DEST_WORK_DIR}/${REPO_NAME}/"
 
