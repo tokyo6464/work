@@ -1,20 +1,26 @@
-# GitHubのユーザー名
-GITHUB_USER=your-github-username
+# GitHubユーザー名
+GITHUB_USER=tokyo
 
-# GitHubパーソナルアクセストークン（repo権限を含むこと）
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# GitHub Personal Access Token（絶対に公開しないでください）
+GITHUB_TOKEN=ghp_Zsi3
 
-# クローン元リポジトリのオーナー（ユーザーまたはOrganization名）
-SRC_ORG=source-org-or-username
+# 宛先リポジトリのOrganization（通常はGITHUB_USERと同じ）
+DEST_ORG=tokyo
 
-# 宛先リポジトリのオーナー（ユーザーまたはOrganization名）
-DEST_ORG=destination-org-or-username
+# 宛先リポジトリ名
+DEST_REPO_NAME=work
 
-# 宛先リポジトリのリポジトリ名
-DEST_REPO_NAME=destination-repository-name
+# 宛先ディレクトリ名
+DEST_WORK_DIR="./destination_repo"
 
-# 宛先リポジトリをクローンする作業ディレクトリ（省略時は ./destination_repo）
-DEST_WORK_DIR=./destination_repo
+# 宛先のブランチ名
+DEST_BRANCH=test
 
-# 反映するコミットメッセージ
-COMMIT_MESSAGE="Import source repositories (no history)"
+# 宛先ユーザ/組織
+SRC_ORG=sh
+
+# クローン元のブランチ名
+SRC_BRANCH=main
+
+# 最終コミットメッセージ
+COMMIT_MESSAGE="feat: Consolidate multiple repositories into single repository"

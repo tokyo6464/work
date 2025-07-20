@@ -4,6 +4,7 @@
 source .env
 
 # 各種リポジトリ情報
+# 宛先リポジトリ（GitHub）の認証情報
 DEST_REPO_URL="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${DEST_ORG}/${DEST_REPO_NAME}.git"
 DEST_WORK_DIR="${DEST_WORK_DIR:-./destination_repo}"
 REPO_LIST_FILE="repos.txt"
@@ -19,7 +20,9 @@ fi
 
 # 各リポジトリを処理
 while read -r REPO_NAME; do
-  SRC_REPO_URL="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${SRC_ORG}/${REPO_NAME}.git"
+while read -r REPO_NAME; do
+  # クローン元リポジトリ（PMWB）の認証情報を使用
+  SRC_REPO_URL="https://${PMWB_USER}:${PMWB_PASSWORD}@${PMWB_HOST}/${SRC_ORG}/${REPO_NAME}.git"
   echo "▶ Cloning source (no history): $REPO_NAME"
 
   TMP_DIR="./__tmp_${REPO_NAME}"
@@ -32,7 +35,7 @@ while read -r REPO_NAME; do
     continue
   fi
 
-  echo "→ Copying contents from $REPO_NAME (excluding .git)"
+  echo "Copying contents from $REPO_NAME (excluding .git)"
   mkdir -p "${DEST_WORK_DIR}/${REPO_NAME}"
   rsync -av --exclude='.git' "$TMP_DIR/" "${DEST_WORK_DIR}/${REPO_NAME}/"
 
@@ -41,7 +44,5 @@ done < "$REPO_LIST_FILE"
 
 # 最終コミット
 cd "$DEST_WORK_DIR" || exit 1
-git add .
-git commit -m "$COMMIT_MESSAGE" || echo "※ 変更がないためコミットはスキップされました"
 
-echo "宛先リポジトリ '$DEST_REPO_NAME'（ブランチ: $DEST_BRANCH）にファイルを反映しました"
+echo "宛先リポジトリ '$DEST_REPO_NAME'（ブランチ: ${DEST_BRANCH}）にファイルを反映しました"
