@@ -20,7 +20,6 @@ fi
 
 # 各リポジトリを処理
 while read -r REPO_NAME; do
-while read -r REPO_NAME; do
   # クローン元リポジトリ（PMWB）の認証情報を使用
   SRC_REPO_URL="https://${PMWB_USER}:${PMWB_PASSWORD}@${PMWB_HOST}/${SRC_ORG}/${REPO_NAME}.git"
   echo "▶ Cloning source (no history): $REPO_NAME"

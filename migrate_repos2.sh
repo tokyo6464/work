@@ -41,7 +41,5 @@ done < "$REPO_LIST_FILE"
 
 # 最終コミット
 cd "$DEST_WORK_DIR" || exit 1
-git add .
-git commit -m "$COMMIT_MESSAGE" || echo "※ 変更がないためコミットはスキップされました"
 
-echo "宛先リポジトリ '$DEST_REPO_NAME'（ブランチ: $DEST_BRANCH）にファイルを反映しました"
+echo "宛先リポジトリ '$DEST_REPO_NAME'（ブランチ: ${DEST_BRANCH}）にファイルを反映しました"

@@ -21,6 +21,3 @@ SRC_ORG=sh
 
 # クローン元のブランチ名
 SRC_BRANCH=main
-
-# 最終コミットメッセージ
-COMMIT_MESSAGE="feat: Consolidate multiple repositories into single repository"
