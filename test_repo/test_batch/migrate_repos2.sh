@@ -20,16 +20,15 @@ fi
 # 各リポジトリを処理
 while read -r REPO_NAME; do
   SRC_REPO_URL="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${SRC_ORG}/${REPO_NAME}.git"
-  echo "SRC_REPO_URL: $SRC_REPO_URL"
   echo "▶ Cloning source (no history): $REPO_NAME"
 
   TMP_DIR="./__tmp_${REPO_NAME}"
   rm -rf "$TMP_DIR"
 
   # 指定ブランチで履歴なしクローン
-  git clone --depth 1 --branch "$SRC_BRANCH" "$SRC_REPO_URL" "$TMP_DIR"
+  git clone --depth 1 --branch "$SOURCE_BRANCH" "$SRC_REPO_URL" "$TMP_DIR"
   if [ $? -ne 0 ]; then
-    echo "クローン失敗: ${REPO_NAME}（スキップします）"
+    echo "⚠ クローン失敗: ${REPO_NAME}（スキップします）"
     continue
   fi
 
@@ -40,4 +39,10 @@ while read -r REPO_NAME; do
   rm -rf "$TMP_DIR"
 done < "$REPO_LIST_FILE"
 
+# 最終コミット
+cd "$DEST_WORK_DIR" || exit 1
+git add .
+git commit -m "$COMMIT_MESSAGE" || echo "※ 変更がないためコミットはスキップされました"
+
 echo "宛先リポジトリ '$DEST_REPO_NAME'（ブランチ: ${DEST_BRANCH}）にファイルを反映しました"
+echo "使用されたコミットメッセージ: $COMMIT_MESSAGE"

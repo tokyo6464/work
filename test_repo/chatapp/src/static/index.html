@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket with Alpine.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body>
+    <div x-data="webSocketComponent()">
+        <h1>WebSocket Client</h1>
+
+        <!-- WebSocket接続のステータス表示 -->
+        <div>
+            <p x-text="status"></p>
+        </div>
+
+        <!-- サーバーから受信したメッセージを表示 -->
+        <div>
+            <h3>Messages from Server:</h3>
+            <ul>
+                <template x-for="(message, index) in messages" :key="index">
+                    <li x-text="message"></li>
+                </template>
+            </ul>
+        </div>
+
+        <!-- メッセージの送信フォーム -->
+        <div>
+            <input type="text" x-model="inputMessage" placeholder="Type a message...">
+            <button @click="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function webSocketComponent() {
+            return {
+                socket: null,
+                inputMessage: '',
+                messages: [],
+                status: 'Disconnected',
+
+                // WebSocket接続を開始する
+                init() {
+                    this.connect();
+                },
+
+                // WebSocket接続の確立
+                connect() {
+                    this.socket = new WebSocket('ws://localhost:8000/ws');
+
+                    this.socket.onopen = () => {
+                        this.status = 'Connected';
+                    };
+
+                    this.socket.onmessage = (event) => {
+                        this.messages.push(event.data);
+                    };
+
+                    this.socket.onclose = () => {
+                        this.status = 'Disconnected';
+                    };
+
+                    this.socket.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                    };
+                },
+
+                // メッセージの送信
+                sendMessage() {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(this.inputMessage);
+                        this.inputMessage = ''; // 送信後、入力フィールドをクリア
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
